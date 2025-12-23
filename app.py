@@ -47,6 +47,7 @@ def main():
   # ask the question
   query_engine = index.as_query_engine()
 
+  # ask questions and create a response
   print("\n--- Ask Gemini a question about your pdf ---")
   while True:
     user_q = input("Question (or 'q' to quit): ")
