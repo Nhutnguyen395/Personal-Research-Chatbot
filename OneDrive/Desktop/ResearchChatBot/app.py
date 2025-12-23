@@ -15,7 +15,7 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # 2. configure LlamaIndex to use Gemini
-# use "Gemini 1.5 Flash" because its fast and free
+# choosing to use gemini 3 pro
 Settings.llm = GoogleGenAI(model="models/gemini-3-pro-preview", api_key=GOOGLE_API_KEY)
 
 # use google embedding model
