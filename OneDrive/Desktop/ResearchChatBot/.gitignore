@@ -1,0 +1,6 @@
+# Ignore the virtual environment
+venv/
+__pycache__/
+
+# SECURITY: Ignore your API keys!
+.env
