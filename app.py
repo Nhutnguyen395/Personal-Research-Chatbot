@@ -44,18 +44,33 @@ def main():
     storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
     index = load_index_from_storage(storage_context)
 
-  # ask the question
-  query_engine = index.as_query_engine()
+  # instead of as_query_engine, use as_chat_engine
+  # chat_mode = "context" to look at the documents and the chat history
+  chat_engine = index.as_chat_engine(chat_mode="context", system_prompt="You are a helpful research assistant. Always cite your sources.")
 
-  # ask questions and create a response
-  print("\n--- Ask Gemini a question about your pdf ---")
+  print("\n--- Ask Gemini (Now with Memory!) ---")
+  print("Type 'q' to quit.\n")
   while True:
-    user_q = input("Question (or 'q' to quit): ")
+    user_q = input("You: ")
     if user_q.lower() == 'q':
       break
+    
+    response = chat_engine.stream_chat(user_q)
+    print("\nAI: ", end="")
+    
+    # loops through the token as they arrive like ChatGPT typing out
+    for token in response.response_gen:
+      print(token, end="", flush=True)
 
-    response = query_engine.query(user_q)
-    print(f"\nAnswer: {response}\n")
+    # Cite Sourse: the 'source_nodes' lists the exact chunks the AI used
+    print("--- Sources Used ---")
+    for node in response.source_nodes:
+      # get metadata (page number, filename)
+      meta = node.node.metadata
+      # get snippet of the text it read
+      snippet = node.node.get_content()[:50].replace("\n", " ")
+      print(f"File: {meta.get('file_name', 'Unknown')} | Page: {meta.get('page_label', 'N/A')}")
+      print(F"Snippet: \"{snippet}...\"\n")
 
 if __name__ == "__main__":
     main()
