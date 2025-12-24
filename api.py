@@ -12,6 +12,7 @@ from llama_index.core import (
 )
 from llama_index.llms.google_genai import GoogleGenAI
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
+from fastapi.middleware.cors import CORSMiddleware
 
 # load api key
 load_dotenv()
@@ -28,6 +29,14 @@ PERSIST_DIR = "./storage"
 os.makedirs(DATA_DIR, exist_ok=True)
 
 app = FastAPI()
+
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["*"],
+  allow_credentials=True,
+  allow_methods=["*"],
+  allow_headers=["*"]
+)
 
 def get_chat_engine():
   """ Load the index and return a chat engine """
